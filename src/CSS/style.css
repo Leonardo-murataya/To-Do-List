@@ -88,3 +88,48 @@ h3 {
   }
 }
 
+
+/*Navegacion opciones del usuario */
+.usuario {
+  display: flex;
+  align-items: center;
+}
+
+.usuario__info {
+  display: flex;
+  align-items: center;
+}
+
+.usuario__iniciales {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #0078D4;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin-right: 10px;
+}
+
+.usuario__detalles {
+  display: flex;
+  flex-direction: column;
+}
+
+.usuario__detalles p {
+  margin: 0;
+  margin-bottom: 5px;
+}
+
+.usuario__detalles span {
+  font-weight: bold;
+  color: #0078D4;
+}
+
+.navegacion__enlace {
+  color: var(--blanco);
+  text-decoration: none;
+  margin-top: 5px;
+}

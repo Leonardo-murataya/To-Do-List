@@ -7,7 +7,7 @@ CREATE TABLE Usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL
+    password CHAR(60) NOT NULL
 );
 
 -- Tabla de listas
@@ -28,3 +28,6 @@ CREATE TABLE Tareas (
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (lista_id) REFERENCES Listas(id)
 );
+
+-- para cambiar el campo password de varchar(255) a char(60) para que sea compatible con la encriptación de password
+-- ALTER TABLE usuarios MODIFY COLUMN password CHAR(60) NOT NULL;
