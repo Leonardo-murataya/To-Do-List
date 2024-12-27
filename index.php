@@ -1,77 +1,117 @@
 <?php
-require 'includes/config/app.php';
-require 'includes/config/funciones.php';
 require 'includes/config/database.php';
 $db = conectarDB();
 
 session_start();
 
+// Solo mantenemos los errores para el manejo de sesión
 $errores = [];
 ?>
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
     <link rel="stylesheet" href="src/CSS/Normalize.css">
     <link rel="stylesheet" href="src/CSS/style.css">
-    <title>To Do List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
-<body>
-<header class="header">
-    <div class="contenedor__header">
-        <div class="barra">
-            <p class="logo">To Do List</p>
-
-            <nav class="navegacion">
-                <?php if (isset($_SESSION['login']) && $_SESSION['login']): ?>
-                    <div class="usuario">
-                        <div class="usuario__info">
-                            <div class="usuario__iniciales">
-                                <?php echo strtoupper(substr($_SESSION['usuario'], 0, 2)); ?>
-                            </div>
-                            <div class="usuario__detalles">
-                                <p> <span>Usuario: </span>  <?php echo $_SESSION['nombre']; ?></p> <!-- Nombre de usuario -->
-                                <p><span>Correo: </span> <?php echo $_SESSION['usuario']; ?></p> <!-- Correo electrónico -->
-                                <a href="cerrar-sesion.php" class="navegacion__enlace">Cerrar Sesión</a>
+<body <?php if(isset($_SESSION['login']) && $_SESSION['login']) echo 'data-user-id="'.$_SESSION['id'].'"'; ?>>
+    <header class="header">
+        <div class="contenedor__header">
+            <div class="barra">
+                <p class="logo">To Do List</p>
+                <nav class="navegacion">
+                    <?php if (isset($_SESSION['login']) && $_SESSION['login']): ?>
+                        <div class="usuario">
+                            <div class="usuario__info">
+                                <div class="usuario__iniciales">
+                                    <?php echo strtoupper(substr($_SESSION['usuario'], 0, 2)); ?>
+                                </div>
+                                <div class="usuario__detalles">
+                                    <p><span>Usuario:</span> <?php echo $_SESSION['nombre']; ?></p>
+                                    <p><span>Correo:</span> <?php echo $_SESSION['usuario']; ?></p>
+                                    <a href="cerrar-sesion.php" class="navegacion__enlace rojo">
+                                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <?php else: ?>
-                    <a href="registro.php" class="navegacion__enlace">Registro</a>
-                    <a href="inicio-sesion.php" class="navegacion__enlace">Inicio de Sesión</a>
-                <?php endif; ?>
-            </nav>
-        </div>
-    </div>
-</header>
-
-<main class="contenedor main">
-    <div class="barra__lsitas">
-        <h2>Listas</h2>
-
-        <div class="contenedor__btn">
-            <button class="btn btn__crear">Crear Lista</button>
-            <button class="btn btn__editar">Editar Lista</button>
-            <button class="btn btn__eliminar">Eliminar Lista</button>
-        </div>
-    </div>
-
-    <section class="lsitas contenedor">
-        <div class="listas">
-            <h2>Tareas pedendientes</h2>
-
-            <div class="mensajes">
-                <p>Tarea de Mateameticas</p>
-                <p>Tarea de Programacion</p>
-                <p>Tarea de Metodologias</p>
+                    <?php else: ?>
+                        <div class="navegacion">
+                            <a href="registro.php" class="navegacion__enlace">
+                                <i class="fas fa-user-plus"></i> Registro
+                            </a>
+                            <a href="inicio-sesion.php" class="navegacion__enlace azul">
+                                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                </nav>
             </div>
         </div>
-    </section>
+    </header>
 
-</main>
+    <main class="contenedor">
+        <div class="listas-header">
+            <h2>Listas</h2>
+            <button id="nuevaLista" class="btn btn-nueva-lista">
+                <i class="fas fa-plus"></i> Nueva Lista
+            </button>
+        </div>
 
+        <div id="listas" class="listas-grid">
+            <!-- Las listas se insertarán aquí dinámicamente via JavaScript -->
+        </div>
+    </main>
+
+    <!-- Modales -->
+    <div id="modal" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar">&times;</span>
+            <h2>Nueva Lista</h2>
+            <form id="formLista" autocomplete="off">
+                <div class="campo">
+                    <label for="titulo">Título de la Lista:</label>
+                    <input type="text" id="titulo" name="titulo" required minlength="1">
+                </div>
+                <button type="submit" class="btn">Crear Lista</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalTarea" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar">&times;</span>
+            <h2>Nueva Tarea</h2>
+            <form id="formTarea">
+                <input type="hidden" id="listaId">
+                <div class="campo">
+                    <label for="descripcionTarea">Descripción de la Tarea:</label>
+                    <input type="text" id="descripcionTarea" name="descripcionTarea" required>
+                </div>
+                <button type="submit" class="btn">Crear Tarea</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalEditar" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar">&times;</span>
+            <h2 id="modalEditarTitulo">Editar</h2>
+            <form id="formEditar">
+                <input type="hidden" id="elementoId">
+                <input type="hidden" id="tipoElemento">
+                <div class="campo">
+                    <label for="nuevoTexto">Nuevo texto:</label>
+                    <input type="text" id="nuevoTexto" name="nuevoTexto" required>
+                </div>
+                <button type="submit" class="btn">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="src/JS/app.js"></script>
 </body>
 </html>

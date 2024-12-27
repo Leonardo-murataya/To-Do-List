@@ -57,46 +57,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Resgistro - To-Do-List</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - To-Do-List</title>
     <link rel="stylesheet" href="src/CSS/Normalize.css">
+    <link rel="stylesheet" href="src/CSS/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-
-    <main>
-        <h1>Crear una cuenta</h1>
-
-        <?php foreach($errores as $error): ?>
-            <div class="alerta error">
-                <?php echo $error; ?>
+    <header class="header">
+        <div class="contenedor__header">
+            <div class="barra">
+                <a href="/" class="logo">To Do List</a>
+                <nav class="navegacion">
+                    <a href="inicio-sesion.php" class="navegacion__enlace">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar sesión
+                    </a>
+                </nav>
             </div>
-        <?php endforeach; ?>
+        </div>
+    </header>
 
-        <form method="POST" class="formulario" action="registro.php">
-            <fieldset>
-                <legend>Información Personal</legend>
+    <main class="contenedor">
+        <div class="auth-container"></div>
+            <h1><i class="fas fa-user-plus"></i> Crear Cuenta</h1>
 
-                <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" name="nombre" value="<?php echo $nombre ?>" placeholder="Tu Nombre">
+            <?php foreach($errores as $error): ?>
+                <div class="alerta error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <?php echo $error; ?>
+                </div>
+            <?php endforeach; ?>
 
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="<?php echo $email ?>" placeholder="Tu Email">
+            <form method="POST" class="formulario">
+                <fieldset>
+                    <legend>Información Personal</legend>
 
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" placeholder="Tu Contraseña">
-            </fieldset>
+                    <div class="campo">
+                        <label for="nombre">
+                            <i class="fas fa-user"></i> Nombre
+                        </label>
+                        <input type="text" id="nombre" name="nombre" value="<?php echo $nombre ?>" placeholder="Tu Nombre" required>
+                    </div>
 
-            <input type="submit" value="Crear Cuenta" class="boton boton-verde">
-        </form>
+                    <div class="campo">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
+                        <input type="email" id="email" name="email" value="<?php echo $email ?>" placeholder="Tu Email" required>
+                    </div>
+
+                    <div class="campo">
+                        <label for="password">
+                            <i class="fas fa-lock"></i> Contraseña
+                        </label>
+                        <input type="password" id="password" name="password" placeholder="Tu Contraseña" required>
+                    </div>
+                </fieldset>
+
+                <input type="submit" value="Crear Cuenta" class="btn">
+
+                <div class="auth-enlaces">
+                    <p>¿Ya tienes cuenta? <a href="inicio-sesion.php">Inicia sesión aquí</a></p>
+                </div>
+            </form>
+        </div>
     </main>
-
-    <footer>
-        <p>¿Ya tienes una cuenta? <a href="inicio-sesion.php">Iniciar Sesión</a></p>
-    </footer>
-
 </body>
 </html>

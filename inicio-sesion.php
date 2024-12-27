@@ -6,8 +6,6 @@ $db = conectarDB();
 
 $errores = [];
 
-
-
 // Auntecacion de usuarios
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
@@ -18,10 +16,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
     $password = mysqli_real_escape_string($db, $_POST['password']);
     // En este caso no validamos el password porque no es necesario, ya que el password no puede contener caracteres especiales.
-
-
-
-
 
     if (!$email) {
         $errores[] = "El email es obligatorio o no es valido";
@@ -59,12 +53,13 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
                 // Obtener nombre de usuario de la base de datos para mostrarlo en el header
                 $_SESSION['nombre'] = $usuario['nombre'];
+                $_SESSION['id'] = $usuario['id']; // Añadir el ID del usuario
 
                 // $_SESSION es una variable super global que nos permite guardar información del usuario en la sesión.
                 $_SESSION['login'] = true;
                 // En este caso guardamos el email del usuario en la sesión para saber que usuario esta autenticado.
 
-                header('Location: /admin');
+                header('Location: /'); // Cambiar a la página principal
             } else {
                 $errores[] = "El password es incorrecto";
             }
@@ -79,43 +74,67 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 }
 ?>
 
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión</title>
     <link rel="stylesheet" href="src/CSS/Normalize.css">
+    <link rel="stylesheet" href="src/CSS/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <main class="contenedor">
-        <h1>Iniciar Sesión</h1>
-
-        <?php foreach($errores as $error): ?>
-            <div class="alerta error">
-                <?php echo $error; ?>
+    <header class="header">
+        <div class="contenedor__header">
+            <div class="barra">
+                <a href="/" class="logo">To Do List</a>
+                <nav class="navegacion">
+                    <a href="registro.php" class="navegacion__enlace">
+                        <i class="fas fa-user-plus"></i> Crear cuenta
+                    </a>
+                </nav>
             </div>
-        <?php endforeach; ?>
+        </div>
+    </header>
 
-        <form method="POST" class="formulario" action="">
-            <fieldset>
-                <legend>Email y Password</legend>
+    <main class="contenedor">
+        <div class="auth-container"></div>
+            <h1><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</h1>
 
-                <label for="email">E-mail</label>
-                <input type="email" id="email" name="email" placeholder="Tu Email" required>
+            <?php foreach($errores as $error): ?>
+                <div class="alerta error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <?php echo $error; ?>
+                </div>
+            <?php endforeach; ?>
 
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Tu Password" required>
+            <form method="POST" class="formulario">
+                <fieldset>
+                    <legend>Accede a tu cuenta</legend>
 
-            </fieldset>
+                    <div class="campo">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Correo Electrónico
+                        </label>
+                        <input type="email" id="email" name="email" placeholder="Tu Email" required>
+                    </div>
 
-            <input type="submit" value="Iniciar Sesión" class="btn btn-verde">
-        </form>
+                    <div class="campo">
+                        <label for="password">
+                            <i class="fas fa-lock"></i> Contraseña
+                        </label>
+                        <input type="password" id="password" name="password" placeholder="Tu Contraseña" required>
+                    </div>
+                </fieldset>
+
+                <input type="submit" value="Iniciar Sesión" class="btn">
+
+                <div class="auth-enlaces">
+                    <p>¿No tienes cuenta? <a href="registro.php">Regístrate aquí</a></p>
+                </div>
+            </form>
+        </div>
     </main>
-
-    <footer class="contenedor">
-        <p>¿No tienes cuenta? <a href="registro.php">Crear Cuenta</a></p>
-    </footer>
-
-</body
+</body>
 </html>
