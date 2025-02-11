@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Revisar si el email ya está registrado
-        $query = "SELECT * FROM usuarios WHERE email = '${email}'";
+        $query = "SELECT * FROM usuarios WHERE email = '$email'";
         $resultado = mysqli_query($db, $query);
 
         // hashear el password
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($resultado->num_rows) {
             $errores[] = "El email ya está registrado";
         } else {
-            $query = "INSERT INTO usuarios (nombre, email, password) VALUES ('${nombre}', '${email}', '${passwordHash}')";
+            $query = "INSERT INTO usuarios (nombre, email, password) VALUES ('$nombre', '$email', '$passwordHash')";
             $resultado = mysqli_query($db, $query);
 
             if ($resultado) {
