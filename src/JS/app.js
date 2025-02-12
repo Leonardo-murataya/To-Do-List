@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Variables globales
     let listas = [];
     try {
@@ -10,7 +10,25 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Error al cargar las listas:', error);
         localStorage.removeItem('listas'); // Limpiar localStorage si hay datos corruptos
     }
-    
+
+    // Verificar si el usuario está autenticado
+    const usuarioId = document.body.dataset.userId;
+    const estaAutenticado = !!usuarioId;
+
+    // Cargar listas desde el servidor si el usuario está autenticado
+    if (estaAutenticado) {
+        fetch('/guardar-listas.php')
+            .then(response => response.json())
+            .then(listasServidor => {
+                if (Array.isArray(listasServidor)) {
+                    listas = listasServidor;
+                    guardarListas();
+                    mostrarListas();
+                }
+            })
+            .catch(error => console.error('Error al cargar listas:', error));
+    }
+
     // Elementos DOM
     const modal = document.getElementById('modal');
     const modalTarea = document.getElementById('modalTarea');
@@ -43,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Crear lista
-    formLista.addEventListener('submit', function(e) {
+    formLista.addEventListener('submit', function (e) {
         e.preventDefault();
         const titulo = document.getElementById('titulo').value.trim();
         if (titulo) {
@@ -61,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Crear tarea
-    formTarea.addEventListener('submit', function(e) {
+    formTarea.addEventListener('submit', function (e) {
         e.preventDefault();
         const listaId = parseInt(document.getElementById('listaId').value);
         const descripcion = document.getElementById('descripcionTarea').value.trim();
@@ -82,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Editar elemento
-    formEditar.addEventListener('submit', function(e) {
+    formEditar.addEventListener('submit', function (e) {
         e.preventDefault();
         const id = parseInt(document.getElementById('elementoId').value);
         const tipo = document.getElementById('tipoElemento').value;
@@ -107,6 +125,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Funciones auxiliares
     function guardarListas() {
         localStorage.setItem('listas', JSON.stringify(listas));
+
+        // Si el usuario está autenticado, sincronizar con el servidor
+        if (estaAutenticado) {
+            fetch('/guardar-listas.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(listas)
+            })
+                .catch(error => console.error('Error al sincronizar:', error));
+        }
     }
 
     function mostrarListas() {
@@ -160,13 +190,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Funciones globales
-    window.mostrarModalTarea = function(listaId) {
+    window.mostrarModalTarea = function (listaId) {
         document.getElementById('listaId').value = listaId;
         modalTarea.style.display = 'block';
     };
 
-    window.editarElemento = function(tipo, id, listaId = null) {
-        const elemento = tipo === 'lista' 
+    window.editarElemento = function (tipo, id, listaId = null) {
+        const elemento = tipo === 'lista'
             ? listas.find(l => l.id === id)
             : listas.find(l => l.id === listaId).tareas.find(t => t.id === id);
 
@@ -177,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modalEditar.style.display = 'block';
     };
 
-    window.eliminarLista = function(id) {
+    window.eliminarLista = function (id) {
         mostrarModalConfirmacion('¿Estás seguro de eliminar esta lista?', () => {
             listas = listas.filter(l => l.id !== id);
             guardarListas();
@@ -185,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 
-    window.eliminarTarea = function(listaId, tareaId) {
+    window.eliminarTarea = function (listaId, tareaId) {
         mostrarModalConfirmacion('¿Estás seguro de eliminar esta tarea?', () => {
             const lista = listas.find(l => l.id === listaId);
             if (lista) {
@@ -196,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 
-    window.toggleTarea = function(listaId, tareaId) {
+    window.toggleTarea = function (listaId, tareaId) {
         const lista = listas.find(l => l.id === listaId);
         if (lista) {
             const tarea = lista.tareas.find(t => t.id === tareaId);
@@ -208,10 +238,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    window.toggleTareas = function(listaId) {
+    window.toggleTareas = function (listaId) {
         const tareasContenido = document.getElementById(`tareas-${listaId}`);
         const botonToggle = tareasContenido.previousElementSibling.querySelector('.btn-toggle-tareas');
-        
+
         if (tareasContenido.style.display === 'none') {
             tareasContenido.style.display = 'block';
             botonToggle.classList.add('active');
