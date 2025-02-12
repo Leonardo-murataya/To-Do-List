@@ -11,22 +11,20 @@ CREATE TABLE Usuarios (
 );
 
 -- Tabla de listas
-CREATE TABLE Listas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT,
-    nombre VARCHAR(100) NOT NULL,
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (usuario_id) REFERENCES Usuarios(id)
+CREATE TABLE listas (
+    id BIGINT PRIMARY KEY,
+    titulo VARCHAR(255) NOT NULL,
+    usuario_id INT NOT NULL,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
 
 -- Tabla de tareas
-CREATE TABLE Tareas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    lista_id INT,
-    descripcion TEXT NOT NULL,
+CREATE TABLE tareas (
+    id BIGINT PRIMARY KEY,
+    texto TEXT NOT NULL,
     completada BOOLEAN DEFAULT FALSE,
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (lista_id) REFERENCES Listas(id)
+    lista_id BIGINT NOT NULL,
+    FOREIGN KEY (lista_id) REFERENCES listas(id)
 );
 
 -- para cambiar el campo password de varchar(255) a char(60) para que sea compatible con la encriptación de password
