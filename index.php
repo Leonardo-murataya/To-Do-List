@@ -1,8 +1,9 @@
 <?php
 require 'includes/config/database.php';
-$db = conectarDB();
+require 'includes/config/funciones.php';
 
 session_start();
+$db = conectarDB();
 
 // Solo mantenemos los errores para el manejo de sesión
 $errores = [];
@@ -54,8 +55,15 @@ $errores = [];
     </header>
 
     <main class="contenedor">
-        <div class="listas-header">
+    <div class="listas-header">
             <h2>Listas</h2>
+
+            <?php if (!isset($_SESSION['login']) || !$_SESSION['login']): ?>
+                <div class="alerta alerta-precaucion">
+                    <p><i class="fas fa-exclamation-triangle"></i> No estás conectado a la base de datos. Los datos se guardarán en el almacenamiento local.</p>
+                </div>
+            <?php endif; ?>
+            
             <button id="nuevaLista" class="btn btn-nueva-lista">
                 <i class="fas fa-plus"></i> Nueva Lista
             </button>

@@ -2,5 +2,15 @@
 session_start();
 $_SESSION = [];
 session_destroy();
-header('Location: /');
 ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        // Limpiar localStorage antes de redireccionar
+        localStorage.clear();
+        // Regresar al usuario al Index
+        window.location.href = '/index.php';
+    </script>
+</head>
+</html>
