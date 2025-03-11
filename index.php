@@ -7,6 +7,23 @@ $db = conectarDB();
 
 // Solo mantenemos los errores para el manejo de sesión
 $errores = [];
+
+// Inicializar variables de sesión para evitar errores
+if (!isset($_SESSION['login'])) {
+    $_SESSION['login'] = false;
+}
+
+if (!isset($_SESSION['id'])) {
+    $_SESSION['id'] = '';
+}
+
+if (!isset($_SESSION['usuario'])) {
+    $_SESSION['usuario'] = '';
+}
+
+if (!isset($_SESSION['nombre'])) {
+    $_SESSION['nombre'] = '';
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -18,13 +35,13 @@ $errores = [];
     <link rel="stylesheet" href="src/CSS/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
-<body <?php if(isset($_SESSION['login']) && $_SESSION['login']) echo 'data-user-id="'.$_SESSION['id'].'"'; ?>>
+<body <?php if($_SESSION['login']) echo 'data-user-id="'.$_SESSION['id'].'"'; ?>>
     <header class="header">
         <div class="contenedor__header">
             <div class="barra">
                 <p class="logo">To Do List</p>
                 <nav class="navegacion">
-                    <?php if (isset($_SESSION['login']) && $_SESSION['login']): ?>
+                    <?php if ($_SESSION['login']): ?>
                         <div class="usuario">
                             <div class="usuario__info">
                                 <div class="usuario__iniciales">
@@ -58,12 +75,12 @@ $errores = [];
     <div class="listas-header">
             <h2>Listas</h2>
 
-            <?php if (!isset($_SESSION['login']) || !$_SESSION['login']): ?>
+            <?php if (!$_SESSION['login']): ?>
                 <div class="alerta alerta-precaucion">
                     <p><i class="fas fa-exclamation-triangle"></i> No estás conectado a la base de datos. Los datos se guardarán en el almacenamiento local.</p>
                 </div>
             <?php endif; ?>
-            
+
             <button id="nuevaLista" class="btn btn-nueva-lista">
                 <i class="fas fa-plus"></i> Nueva Lista
             </button>

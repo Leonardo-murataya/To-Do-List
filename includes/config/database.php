@@ -1,16 +1,19 @@
 <?php
-// Conectar a la base de datos
-function conectarDB() : mysqli {
-    $db = mysqli_connect('localhost', 'root', 'root', 'todolist');
+function conectarDB() {
+    $db_host = getenv('DB_HOST') ?: 'localhost';
+    $db_user = getenv('DB_USER') ?: 'todouser';
+    $db_pass = getenv('DB_PASSWORD') ?: 'todopassword';
+    $db_name = getenv('DB_NAME') ?: 'tododb';
+
+    $db = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
 
     if(!$db) {
-        error_log("Error de conexión: " . mysqli_connect_error());
-        echo "Error en la conexión";
+        echo "Error: No se pudo conectar a MySQL.";
+        echo "errno de depuración: " . mysqli_connect_errno();
+        echo "error de depuración: " . mysqli_connect_error();
         exit;
     }
 
-    // Establecer charset
-    mysqli_set_charset($db, "utf8");
-    
     return $db;
 }
+?>
